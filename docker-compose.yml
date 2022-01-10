@@ -1,0 +1,6 @@
+db:
+  image: postgres
+  ports: 
+    1432:5432
+web:
+  build: ./api
