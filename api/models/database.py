@@ -15,25 +15,25 @@ Base = declarative_base()
 
 class Customers(Base):
 
-    __tablename__ = "Customers"
+    __tablename__ = "customers"
     cust_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
-    acc_id = relationship("Accounts")
+    acc_id = relationship("accounts")
 
     def __init__(self, name) -> None:
         self.name = name
 
 class Accounts(Base):
 
-    __tablename__ = "Accounts"
+    __tablename__ = "accounts"
     acc_id = Column(Integer, primary_key=True, autoincrement=True)
     acc_name = Column(String(50), nullable=False)
     acc_number = Column(Integer, unique=True)
     acc_type = Column(String(20), nullable=False)
     amount = Column(Integer)
-    customer_id = Column(Integer, ForeignKey("Customers.cust_id"))
+    customer_id = Column(Integer, ForeignKey("customers.cust_id"))
     last_update = Column(DateTime(timezone=False), default=datetime.datetime.now())
-    trans_id = relationship("Transactions")
+    trans_id = relationship("transactions")
 
     def __init__(self, name, number, amount, customer_id, acc_type="Current") -> None:
         self.acc_name = name
@@ -44,9 +44,9 @@ class Accounts(Base):
 
 class Transactions(Base):
 
-    __tablename__ = "Transactions"
+    __tablename__ = "transactions"
     trans_id = Column(Integer, primary_key=True, autoincrement=True)
-    acc_num = Column(Integer, ForeignKey("Accounts.acc_number"), nullable=False)
+    acc_num = Column(Integer, ForeignKey("accounts.acc_number"), nullable=False)
     trans_msg = Column(String(250), nullable=False)
     amount = Column(Integer, nullable=False)
     trans_type = Column(String(20), nullable=False)
@@ -59,10 +59,14 @@ class Transactions(Base):
         self.transaction_type = transaction_type
 
 if __name__ == "__main__":
-
     try:
-        docker_host_ip = "172.17.0.1"
-        engine = create_engine(f"postgres://docker:docker@{docker_host_ip}/docker")
+        # for linux and windows systems uncomment below
+        docker_host_ip = "172.17.0.2"
+
+        # for mac os
+        # docker_host_ip = "host.docker.internal"
+        engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/docker", echo=True)
+        # engine = create_engine("postgresql://postgres:postgres@localhost/docker")
         Base.metadata.create_all(engine)
         logger.info("All Models Created Successfully")
     except Exception as e:
