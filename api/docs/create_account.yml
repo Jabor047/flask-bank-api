@@ -1,0 +1,7 @@
+Creates accounts for Customers in the system
+---
+tags:
+  - CreateAccount
+Parameters:
+  - name: usage
+    description:  The url should have the necesarry info to create a new account. base_url

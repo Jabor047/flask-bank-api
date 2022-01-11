@@ -4,19 +4,18 @@ from api.logger import setup_logger
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import scoped_session, sessionmaker
-from flask import Flask, request, redirect, url_for
+from flask import request, Blueprint
 
-
-app = Flask(__name__)
 logger = setup_logger("api")
 docker_host_ip = "172.17.0.1"
 engine = create_engine(f"postgres://docker:docker@{docker_host_ip}/docker")
+bank = Blueprint("bank", __name__, url_prefix="/")
 
 Base.metadata.bind = engine
 
 db = scoped_session(sessionmaker(bind=engine))
 
-@app.route("/create_account", methods=['POST', 'GET'])
+@bank.route("/create_account", methods=['POST', 'GET'])
 def create_account():
     customer_name = request.args.get('customer_name', None)
     account_name = request.args.get('account_name', None)
@@ -50,7 +49,7 @@ def create_account():
         create_acc_error = jsonify(success=False, status_code=400, message=f"{account_name} already exists")
         return create_acc_error
 
-@app.route("/transfer", method=["POST", "GET"])
+@bank.route("/transfer", method=["POST", "GET"])
 def transfer():
     source_acc_num = request.args.get('source_account_number')
     target_acc_num = request.args.get('target_account_number')
@@ -124,7 +123,7 @@ def transfer():
                                               message="Can't transfer to the same account")
         return same_transfer_account_error
 
-@app.route("/retrieve_balance", method=["POST", "GET"])
+@bank.route("/retrieve_balance", method=["POST", "GET"])
 def retrieve_balance():
     account_number = request.args.get('account_number')
 
@@ -141,7 +140,7 @@ def retrieve_balance():
                                           message=f"Account balance is {balance}")
                 return balance_account
 
-@app.route("/transferhistory", method=["POST", "GET"])
+@bank.route("/transferhistory", method=["POST", "GET"])
 def retrieve_transfer_history():
     account_number = request.args.get("account_number")
     if request.method == "GET":
@@ -158,7 +157,7 @@ def retrieve_transfer_history():
             return transfer_history_error
 
 
-@app.errorhandler(SQLAlchemyError)
+@bank.errorhandler(SQLAlchemyError)
 def sql_error_handler(error):
     error = jsonify(success=False, status_code=400, error=str(error))
     return error
