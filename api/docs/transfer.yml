@@ -1,0 +1,34 @@
+Facilitate money transfers between accounts
+---
+tags:
+  - APIROUTES
+parameters:
+  - name: usage
+    description: The url should have the necessary info to retrive the balance. Usage - base_url/transfer?source_account_number=344&target_account_number=778&amount=90
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "source_account_number"
+        - "target_account_number"
+        - "amount"
+      properties:
+        source_account_number:
+          type: "number"
+          example: "2334"
+        target_account_number:
+          type: "number"
+          example: "3224"
+        amount:
+          type: "number"
+          example: "340000"
+responses:
+  200:
+    description: When the page loads successfully and transaction complete without error
+
+  403:
+    description: Forbidden! Cannot transfer to same account
+
+  404:
+    description: Either one or both the accounts can not be found

@@ -1,7 +1,40 @@
 Creates accounts for Customers in the system
 ---
 tags:
-  - CreateAccount
+  - APIROUTES
 Parameters:
   - name: usage
-    description:  The url should have the necesarry info to create a new account. base_url
+    description:  The url should have the necessary info to create a new account. usage - base_url/create_account?customer_name=kev&account_name=example&account_number=2&amount=90&account_type=current
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "customer_name"
+        - "account_name"
+        - "account_number"
+        - "amount"
+        - "account_type"
+      properties:
+        customer_name:
+          type: "string"
+          example: "kev"
+        account_name:
+          type: "string"
+          example: "Rent"
+        account_number:
+          type: "number"
+          example: "344"
+        amount:
+          type: "number"
+          example: "48000"
+        account_type:
+          type: "string"
+          example: "Current"
+responses:
+  200:
+    description: When the page loads successfully and creates account
+
+  400:
+    description: Bad request the account already exists
+

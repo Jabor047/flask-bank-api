@@ -1,0 +1,23 @@
+retrive transfer history of a given customer
+---
+tags:
+  - APIROUTES
+parameters:
+  - name: usage
+    description: The url should contain account_number. Usage - base_url/transferhistory?account_number=344
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "account_number"
+      properties:
+        account_number:
+          type: "number"
+          example: "344"
+responses:
+  200:
+    description: When the page loads successfully and json object is returned
+
+  404:
+    description: Account not Found.try different one

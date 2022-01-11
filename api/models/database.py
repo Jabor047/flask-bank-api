@@ -1,9 +1,13 @@
 import datetime
+import os
+import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from logger import setup_logger
 
 logger = setup_logger("database")
@@ -55,6 +59,7 @@ class Transactions(Base):
         self.transaction_type = transaction_type
 
 if __name__ == "__main__":
+
     try:
         docker_host_ip = "172.17.0.1"
         engine = create_engine(f"postgres://docker:docker@{docker_host_ip}/docker")

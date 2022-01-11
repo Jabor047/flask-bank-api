@@ -1,0 +1,23 @@
+Retrieve Balance for Account
+---
+tags:
+  - APIROUTES
+parameters:
+  - name: usage
+    description: The url should have the necessary info to retrive the balance i.e account_number. usage - base_url/retrieve_balance?account_number
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "account_number"
+      properties:
+        account_number:
+          type: "number"
+          example: "1234567890"
+responses:
+  200:
+    description: When the page loads successfully and returns balance
+
+  404:
+    description: Account not Found
