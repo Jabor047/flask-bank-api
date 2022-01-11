@@ -1,10 +1,10 @@
 db:
-  image: postgres
+  image: orchardup/postgresql
   ports: 
     - 1432:5432
 web:
-  build: ./api
+  build: ./
   links:
     - db
   ports:
-    - 5000:5000
+    - 9090:5000
