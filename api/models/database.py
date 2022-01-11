@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
-from api.logger import setup_logger
+from logger import setup_logger
 
 logger = setup_logger("database")
 Base = declarative_base()
@@ -48,8 +48,8 @@ class Transactions(Base):
     trans_type = Column(String(20), nullable=False)
     created_at = Column(DateTime(timezone=False), default=datetime.datetime.now())
 
-    def __init__(self, acc_id, trans_msg, amount, transaction_type) -> None:
-        self.acc_id = acc_id
+    def __init__(self, acc_num, trans_msg, amount, transaction_type="transfer") -> None:
+        self.acc_num = acc_num
         self.trans_msg = trans_msg
         self.amount = amount
         self.transaction_type = transaction_type

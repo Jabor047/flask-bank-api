@@ -1,5 +1,5 @@
 from flask.json import jsonify
-from api.models.database import Accounts, Base
+from api.models.database import Accounts, Base, Transactions
 from api.logger import setup_logger
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
@@ -47,8 +47,116 @@ def create_account():
 
             return success
 
-        error = jsonify(success=False, status_code=400, message=f"{account_name} already exists")
-        return error
+        create_acc_error = jsonify(success=False, status_code=400, message=f"{account_name} already exists")
+        return create_acc_error
+
+@app.route("/transfer", method=["POST", "GET"])
+def transfer():
+    source_acc_num = request.args.get('source_account_number')
+    target_acc_num = request.args.get('target_account_number')
+    amount = int(request.args.get('amount'))
+
+    if request.method == "POST":
+        if source_acc_num != target_acc_num:
+            source_acc = db.execute("SELECT * FROM Accounts WHERE account_number = :d",
+                                    {"d": source_acc_num}).fetchone()
+
+            target_acc = db.execute("SELECT * FROM Accounts WHERE account_number = :d",
+                                    {"d": target_acc_num}).fetchone()
+
+            if source_acc and target_acc:
+                if source_acc["amount"] > amount:
+                    try:
+                        source_bal = source_acc["amount"] - amount
+                        target_bal = target_acc["amount"] + amount
+
+                        source_update = db.execute("UPDATE Accounts set amount = :a WHERE acc_number = :b",
+                                                   {"a": source_bal, "b": source_acc_num})
+
+                        db.add(source_update)
+                        db.commit()
+
+                        source_trans = Transactions(acc_num=source_acc_num,
+                                                    trans_msg=f"Transfered {amount} to {str(target_acc_num)}",
+                                                    amount=amount,
+                                                    transaction_type="withdraw")
+
+                        db.add(source_trans)
+                        db.commit()
+
+                        target_update = db.execute("UPDATE Accounts set amount = :a WHERE acc_number = :b",
+                                                   {"a": target_bal, "b": target_acc_num})
+                        db.add(target_update)
+                        db.commit()
+
+                        target_trans = Transactions(acc_num=target_acc_num,
+                                                    trans_msg=f"Transfered {amount} from {str(source_acc_num)}",
+                                                    amount=amount,
+                                                    transaction_type="deposit")
+
+                        db.add(target_trans)
+                        db.commit()
+                    except Exception as e:
+                        raise e
+
+                    transfer_success = jsonify(success=True, status_code=200,
+                                               message=f"{amount} transfered from {source_acc_num} to {target_acc_num}")
+
+                    return transfer_success
+                else:
+                    transfer_balance_error = jsonify(success=False, status_code=403,
+                                                     message=f"{source_acc_num} has insufficient balance")
+                    return transfer_balance_error
+            elif source_acc and target_acc is None:
+                transfer_account_error = jsonify(success=False, status_code=404,
+                                                 message=f"Account {target_acc_num} not Found try different ones")
+                return transfer_account_error
+            elif source_acc is None and target_acc:
+                transfer_account_error = jsonify(success=False, status_code=404,
+                                                 message=f"Account {source_acc_num} not Found.")
+                return transfer_account_error
+            else:
+                transfer_account_error = jsonify(success=False, status_code=404,
+                                                 message="Both Accounts not Found try different ones")
+                return transfer_account_error
+
+        same_transfer_account_error = jsonify(success=False, status_code=403,
+                                              message="Can't transfer to the same account")
+        return same_transfer_account_error
+
+@app.route("/retrieve_balance", method=["POST", "GET"])
+def retrieve_balance():
+    account_number = request.args.get('account_number')
+
+    if request.method == "GET":
+        account = db.execute("SELECT * FROM Accounts WHERE account_number = :d", {"d": account_number}).fetchone()
+        if account is None:
+            balance_account_error = jsonify(success=False, status_code=404,
+                                            message="Account not Found.try different one")
+            return balance_account_error
+        else:
+            balance = db.execute("SELECT amount FROM Accounts WHERE acc_number = :d", {"d": account_number}).fetchone()
+            if balance:
+                balance_account = jsonify(success=False, status_code=200,
+                                          message=f"Account balance is {balance}")
+                return balance_account
+
+@app.route("/transferhistory", method=["POST", "GET"])
+def retrieve_transfer_history():
+    account_number = request.args.get("account_number")
+    if request.method == "GET":
+
+        account_transfer_his = db.execute("SELECT * FROM Transactions WHERE acc_num = :a", {"a": account_number})
+
+        if account_transfer_his is not None:
+            transfer_history_success = jsonify(success=True, status_code=200, history=account_transfer_his)
+
+            return transfer_history_success
+        else:
+            transfer_history_error = jsonify(success=False, status_code=404,
+                                             message="Account not Found.try different one")
+            return transfer_history_error
+
 
 @app.errorhandler(SQLAlchemyError)
 def sql_error_handler(error):
