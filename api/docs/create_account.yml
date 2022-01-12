@@ -2,7 +2,7 @@ Creates accounts for Customers in the system
 ---
 tags:
   - APIROUTES
-Parameters:
+parameters:
   - name: usage
     description:  The url should have the necessary info to create a new account. usage - base_url/create_account?customer_name=kev&account_name=example&account_number=2&amount=90&account_type=current
     in: body
