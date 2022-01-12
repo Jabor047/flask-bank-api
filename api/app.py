@@ -25,7 +25,7 @@ db = scoped_session(sessionmaker(bind=engine))
 bank = Blueprint("bank", __name__, url_prefix="/")
 
 @bank.route("/create_account", methods=['POST', 'GET'])
-@swag_from("./docs/create_account.yaml")
+@swag_from("docs/create_account.yaml")
 def create_account():
     customer_name = request.args.get('customer_name', None)
     account_name = request.args.get('account_name', None)
@@ -60,7 +60,7 @@ def create_account():
         return create_acc_error
 
 @bank.route("/transfer", methods=["POST", "GET"])
-@swag_from("./docs/transfer.yaml")
+@swag_from("docs/transfer.yaml")
 def transfer():
     source_acc_num = request.args.get('source_account_number')
     target_acc_num = request.args.get('target_account_number')
@@ -135,7 +135,7 @@ def transfer():
         return same_transfer_account_error
 
 @bank.route("/retrieve_balance", methods=["POST", "GET"])
-@swag_from("./docs/retrieve_balance.yaml")
+@swag_from("docs/retrieve_balance.yaml")
 def retrieve_balance():
     account_number = request.args.get('account_number')
 
@@ -153,7 +153,7 @@ def retrieve_balance():
                 return balance_account
 
 @bank.route("/transferhistory", methods=["POST", "GET"])
-@swag_from("./docs/transfer_history.yaml")
+@swag_from("docs/transfer_history.yaml")
 def retrieve_transfer_history():
     account_number = request.args.get("account_number")
     if request.method == "GET":
