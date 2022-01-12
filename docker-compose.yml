@@ -1,10 +1,12 @@
-db:
-  image: orchardup/postgresql
-  ports: 
-    - 1432:5432
-web:
-  build: ./
-  links:
-    - db
-  ports:
-    - 9090:5000
+version: '1.0.0'
+services:
+  db:
+    image: orchardup/postgresql
+    ports: 
+      - 1432:5432
+  web:
+    build: ./
+    links:
+      - db
+    ports:
+      - 9090:5000
