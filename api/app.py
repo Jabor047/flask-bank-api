@@ -24,8 +24,8 @@ Base.metadata.bind = engine
 db = scoped_session(sessionmaker(bind=engine))
 bank = Blueprint("bank", __name__, url_prefix="/")
 
-@bank.route("/create_account", methods=['POST', 'GET'])
-@swag_from("docs/create_account.yaml")
+@bank.route("/create_account", methods=['POST'])
+@swag_from("docs/create_account.yml")
 def create_account():
     customer_name = request.args.get('customer_name', None)
     account_name = request.args.get('account_name', None)
@@ -59,8 +59,8 @@ def create_account():
         create_acc_error = jsonify(success=False, status_code=400, message=f"{account_name} already exists")
         return create_acc_error
 
-@bank.route("/transfer", methods=["POST", "GET"])
-@swag_from("docs/transfer.yaml")
+@bank.route("/transfer", methods=["POST"])
+@swag_from("docs/transfer.yml")
 def transfer():
     source_acc_num = request.args.get('source_account_number')
     target_acc_num = request.args.get('target_account_number')
@@ -134,8 +134,8 @@ def transfer():
                                               message="Can't transfer to the same account")
         return same_transfer_account_error
 
-@bank.route("/retrieve_balance", methods=["POST", "GET"])
-@swag_from("docs/retrieve_balance.yaml")
+@bank.route("/retrieve_balance", methods=["GET"])
+@swag_from("docs/retrieve_balance.yml")
 def retrieve_balance():
     account_number = request.args.get('account_number')
 
@@ -152,8 +152,8 @@ def retrieve_balance():
                                           message=f"Account balance is {balance}")
                 return balance_account
 
-@bank.route("/transferhistory", methods=["POST", "GET"])
-@swag_from("docs/transfer_history.yaml")
+@bank.route("/transferhistory", methods=["GET"])
+@swag_from("docs/transfer_history.yml")
 def retrieve_transfer_history():
     account_number = request.args.get("account_number")
     if request.method == "GET":
