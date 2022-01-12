@@ -24,10 +24,6 @@ Base.metadata.bind = engine
 db = scoped_session(sessionmaker(bind=engine))
 bank = Blueprint("bank", __name__, url_prefix="/")
 
-@bank.route("/")
-def hello():
-    return "Hello, world"
-
 @bank.route("/create_account", methods=['POST', 'GET'])
 @swag_from("./docs/create_account.yaml")
 def create_account():
@@ -45,7 +41,7 @@ def create_account():
 
         customer_id = customer["cust_id"]
 
-        account = db.execute("SELECT * FROM accounts WHERE account_number = :d", {"d": account_number}).fetchone()
+        account = db.execute("SELECT * FROM accounts WHERE acc_number = :d", {"d": account_number}).fetchone()
         if account is None:
             try:
                 query = Accounts(name=account_name, number=account_number, amount=amount, customer_id=customer_id,
@@ -72,10 +68,10 @@ def transfer():
 
     if request.method == "POST":
         if source_acc_num != target_acc_num:
-            source_acc = db.execute("SELECT * FROM accounts WHERE account_number = :d",
+            source_acc = db.execute("SELECT * FROM accounts WHERE acc_number = :d",
                                     {"d": source_acc_num}).fetchone()
 
-            target_acc = db.execute("SELECT * FROM accounts WHERE account_number = :d",
+            target_acc = db.execute("SELECT * FROM accounts WHERE acc_number = :d",
                                     {"d": target_acc_num}).fetchone()
 
             if source_acc and target_acc:
@@ -144,7 +140,7 @@ def retrieve_balance():
     account_number = request.args.get('account_number')
 
     if request.method == "GET":
-        account = db.execute("SELECT * FROM accounts WHERE account_number = :d", {"d": account_number}).fetchone()
+        account = db.execute("SELECT * FROM accounts WHERE acc_number = :d", {"d": account_number}).fetchone()
         if account is None:
             balance_account_error = jsonify(success=False, status_code=404,
                                             message="Account not Found.try different one")
