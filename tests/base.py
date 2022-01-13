@@ -13,6 +13,7 @@ class BaseTestCase(unittest.TestCase):
     logger = setup_logger("unittest")
     URL = "http://127.0.0.1:5000"
 
-    def the():
-        pass
+    def test_index(self):
+        response = requests.get(self.URL + '/')
+        self.assertEqual(response.status_code, 200)
 
