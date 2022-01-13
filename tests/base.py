@@ -4,15 +4,16 @@ import sys
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from flask import request
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from api.models.database import Base
 from api.logger import setup_logger
-
+from api.app import ip_address, port
 
 class BaseTestCase(unittest.TestCase):
     logger = setup_logger("unittest")
-    URL = "http://127.0.0.1:5000"
+    URL = f"http://{ip_address}:{port}"
 
     docker_host_ip = "172.17.0.2"
 
