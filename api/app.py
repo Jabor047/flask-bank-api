@@ -56,7 +56,7 @@ def create_account():
 
             return success
 
-        create_acc_error = jsonify(success=False, status_code=400, message=f"{account_name} already exists")
+        create_acc_error = jsonify(success=False, status_code=400, message=f"{account_number} already exists")
         return create_acc_error
 
 @bank.route("/transfer", methods=["POST"])
