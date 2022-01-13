@@ -121,7 +121,24 @@ class BankApiTestCase(BaseTestCase):
 
         response = requests.post(self.URL + "/transfer", params=transfer_params)
         self.assertEqual(response.status_code, 403)
-        self.assertIn("TCan't transfer to the same account", response.message)
+        self.assertIn("Can't transfer to the same account", response.message)
+
+    def test_retrive_balance_success(self):
+        retrieve_balance_params = {
+            "account_number": "0009"
+        }
+        response = requests.post(self.URL + "/transfer", params=retrieve_balance_params)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Account balance is", response.message)
+
+    def test_retrive_balance_account_exists_not(self):
+        retrieve_balance_params = {
+            "account_number": "0008"
+        }
+        response = requests.post(self.URL + "/transfer", params=retrieve_balance_params)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("Account not Found.try different one", response.message)
+
 
     def delete_test_accounts(self):
         account_number = "0009"
