@@ -46,13 +46,96 @@ class BankApiTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("already exists", response.message)
 
+    def test_transfer_success(self):
+        account_params = {
+            "customer_name": "Georgina%20Hazel",
+            "account_name": "test",
+            "account_number": "0010",
+            "amount": "300",
+            "account_type": "test"
+        }
+
+        requests.post(self.URL + '/create_account', params=account_params)
+
+        transfer_params = {
+            "source_acc_num": "0009",
+            "target_acc_num": "0010",
+            "amount": "100"
+        }
+
+        response = requests.post(self.URL + "/transfer", params=transfer_params)
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("transfered from", response.message)
+
+    def test_transfer_insufficient_balance(self):
+        transfer_params = {
+            "source_acc_num": "0009",
+            "target_acc_num": "0010",
+            "amount": "400"
+        }
+
+        response = requests.post(self.URL + "/transfer", params=transfer_params)
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("insufficient balance", response.message)
+
+    def test_transfer_target_account_exists_not(self):
+        transfer_params = {
+            "source_acc_num": "0009",
+            "target_acc_num": "0011",
+            "amount": "400"
+        }
+
+        response = requests.post(self.URL + "/transfer", params=transfer_params)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("Target account", response.message)
+
+    def test_transfer_source_account_exists_not(self):
+        transfer_params = {
+            "source_acc_num": "0008",
+            "target_acc_num": "0010",
+            "amount": "400"
+        }
+
+        response = requests.post(self.URL + "/transfer", params=transfer_params)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("Source account", response.message)
+
+    def test_transfer_both_accounts_exist_not(self):
+        transfer_params = {
+            "source_acc_num": "0008",
+            "target_acc_num": "0011",
+            "amount": "400"
+        }
+
+        response = requests.post(self.URL + "/transfer", params=transfer_params)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("Both accounts not Found", response.message)
+
+    def test_transfer_same_account_transfer(self):
+        transfer_params = {
+            "source_acc_num": "0009",
+            "target_acc_num": "0009",
+            "amount": "400"
+        }
+
+        response = requests.post(self.URL + "/transfer", params=transfer_params)
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("TCan't transfer to the same account", response.message)
+
     def delete_test_accounts(self):
         account_number = "0009"
         query = self.db.Execute("DELETE FROM accounts WHERE account_number = :d",
                                 {"d": account_number})
         self.db.add(query)
         self.db.commit()
-        self.logger.info("Successfully deleted the test account")
+
+        account_number_two = "0010"
+        query_two = self.db.Execute("DELETE FROM accounts WHERE account_number = :d",
+                                    {"d": account_number_two})
+        self.db.add(query_two)
+        self.db.commit()
+        self.logger.info("Successfully deleted the test accounts")
 
 
 if __name__ == "__main__":
