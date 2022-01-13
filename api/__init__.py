@@ -1,12 +1,14 @@
 import os
 import sys
-from flask import Flask
+from flask import Flask, request
 from flasgger import Swagger
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from api.config.swagger import template, swagger_config
 from api.app import bank
 
+ip_address = ""
+port = ""
 
 def create_app(test_config=None):
     # create and configure app
@@ -35,6 +37,11 @@ def create_app(test_config=None):
     app.register_blueprint(bank)
     Swagger(app, config=swagger_config, template=template)
 
+    with app.test_request_context("/"):
+        global ip_address
+        global port
+        ip_address = request.environ['REMOTE_ADDR']
+        port = request.environ['REMOTE_PORT']
     # @app.route("/")
     # def hello():
     #     return "Hello, world"
