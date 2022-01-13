@@ -127,7 +127,7 @@ class BankApiTestCase(BaseTestCase):
         retrieve_balance_params = {
             "account_number": "0009"
         }
-        response = requests.post(self.URL + "/transfer", params=retrieve_balance_params)
+        response = requests.post(self.URL + "/retrieve_balance", params=retrieve_balance_params)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Account balance is", response.message)
 
@@ -135,10 +135,25 @@ class BankApiTestCase(BaseTestCase):
         retrieve_balance_params = {
             "account_number": "0008"
         }
-        response = requests.post(self.URL + "/transfer", params=retrieve_balance_params)
+        response = requests.post(self.URL + "/retrieve_balance", params=retrieve_balance_params)
         self.assertEqual(response.status_code, 404)
-        self.assertIn("Account not Found.try different one", response.message)
+        self.assertIn("Account not Found", response.message)
 
+    def test_transferhistory_success(self):
+        retrieve_balance_params = {
+            "account_number": "0009"
+        }
+        response = requests.post(self.URL + "/transferhistory", params=retrieve_balance_params)
+        self.assertEqual(response.status_code, 200)
+
+    def test_transferhistory_fail(self):
+        retrieve_balance_params = {
+            "account_number": "0009"
+        }
+        response = requests.post(self.URL + "/transferhistory", params=retrieve_balance_params)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("Account not Found", response.message)
+        self.delete_test_accounts()
 
     def delete_test_accounts(self):
         account_number = "0009"
