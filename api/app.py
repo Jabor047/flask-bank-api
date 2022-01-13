@@ -119,15 +119,15 @@ def transfer():
                     return transfer_balance_error
             elif source_acc and target_acc is None:
                 transfer_account_error = jsonify(success=False, status_code=404,
-                                                 message=f"Account {target_acc_num} not Found try different ones")
+                                                 message=f"Target account {target_acc_num} not Found")
                 return transfer_account_error
             elif source_acc is None and target_acc:
                 transfer_account_error = jsonify(success=False, status_code=404,
-                                                 message=f"Account {source_acc_num} not Found.")
+                                                 message=f"Source account {source_acc_num} not Found.")
                 return transfer_account_error
             else:
                 transfer_account_error = jsonify(success=False, status_code=404,
-                                                 message="Both Accounts not Found try different ones")
+                                                 message="Both accounts not Found try different ones")
                 return transfer_account_error
 
         same_transfer_account_error = jsonify(success=False, status_code=403,
