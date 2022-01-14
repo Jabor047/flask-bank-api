@@ -76,11 +76,9 @@ def transfer():
                         source_bal = source_acc_bal["amount"] - amount
                         target_bal = target_acc_bal["amount"] + amount
 
-                        source_update = db.execute("UPDATE accounts set amount = :a WHERE acc_number = :b",
-                                                   {"a": source_bal, "b": source_acc_num})
+                        db.execute("UPDATE accounts set amount = :a WHERE acc_number = :b",
+                                   {"a": source_bal, "b": source_acc_num})
                         logger.info(f"updating source balance {source_acc_num}")
-                        db.add(source_update)
-                        db.commit()
 
                         source_trans = Transactions(acc_num=source_acc_num,
                                                     trans_msg=f"Transfered {amount} to {str(target_acc_num)}",
@@ -90,11 +88,9 @@ def transfer():
                         db.add(source_trans)
                         db.commit()
 
-                        target_update = db.execute("UPDATE accounts set amount = :a WHERE acc_number = :b",
-                                                   {"a": target_bal, "b": target_acc_num})
+                        db.execute("UPDATE accounts set amount = :a WHERE acc_number = :b",
+                                   {"a": target_bal, "b": target_acc_num})
                         logger.info(f"updating source balance {target_acc_num}")
-                        db.add(target_update)
-                        db.commit()
 
                         target_trans = Transactions(acc_num=target_acc_num,
                                                     trans_msg=f"Transfered {amount} from {str(source_acc_num)}",
