@@ -13,7 +13,7 @@ from api.logger import setup_logger
 
 logger = setup_logger("api")
 # for linux and windows systems uncomment below
-docker_host_ip = "172.17.0.2"
+docker_host_ip = "172.18.0.2"
 
 # for mac os
 # docker_host_ip = "host.docker.internal"

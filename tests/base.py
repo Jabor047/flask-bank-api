@@ -15,7 +15,7 @@ class BaseTestCase(unittest.TestCase):
     logger = setup_logger("unittest")
     URL = f"http://{ip_address}:5000"
 
-    docker_host_ip = "172.17.0.2"
+    docker_host_ip = "172.18.0.2"
 
     # for mac os
     # docker_host_ip = "host.docker.internal"
