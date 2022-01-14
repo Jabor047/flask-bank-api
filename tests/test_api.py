@@ -20,7 +20,6 @@ class BankApiTestCase(BaseTestCase):
         response = requests.post(self.URL + '/create_account', params=params)
         response = response.content.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 200)
         self.assertIn("account Successfully added", response["message"])
 
@@ -51,11 +50,10 @@ class BankApiTestCase(BaseTestCase):
         response = requests.post(self.URL + '/create_account', params=params)
         response = response.content.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 400)
         self.assertIn("already exists", response["message"])
 
-    def test_transfer_success(self):
+    def test_transfer_csuccess(self):
         account_params = {
             "customer_name": "Georgina%20Hazel",
             "account_name": "test",
@@ -110,7 +108,7 @@ class BankApiTestCase(BaseTestCase):
         self.assertEqual(response["status_code"], 404)
         self.assertIn("Target account", response["message"])
 
-    def test_transfer_source_account_exists_not(self):
+    def test_transfer_zsource_account_exists_not(self):
         transfer_params = {
             "source_account_number": 8,
             "target_account_number": 10,
