@@ -60,7 +60,7 @@ def create_account():
 def transfer():
     source_acc_num = request.args.get('source_account_number')
     target_acc_num = request.args.get('target_account_number')
-    amount = int(request.args.get('amount'))
+    amount = request.args.get('amount')
 
     if request.method == "POST":
         if source_acc_num != target_acc_num:
