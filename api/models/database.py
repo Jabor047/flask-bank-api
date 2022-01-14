@@ -56,7 +56,7 @@ class Transactions(Base):
         self.acc_num = acc_num
         self.trans_msg = trans_msg
         self.amount = amount
-        self.transaction_type = transaction_type
+        self.trans_type = transaction_type
 
 def create_tables(engine, name):
     try:
