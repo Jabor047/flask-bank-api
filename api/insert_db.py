@@ -7,21 +7,11 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from models.database import Base
 from logger import setup_logger
+from api.db_init import db
 
 logger = setup_logger("insert_data")
 
 def create_customers(db_name):
-
-    # for linux and windows systems uncomment below
-    docker_host_ip = "172.18.0.2"
-
-    # for mac os
-    # docker_host_ip = "host.docker.internal"
-    engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/{db_name}")
-
-    Base.metadata.bind = engine
-
-    db = scoped_session(sessionmaker(bind=engine))
 
     logger.info("Reading customers from customers.json")
     customers = open("/app/api/customers.json")
@@ -31,9 +21,3 @@ def create_customers(db_name):
         db.execute("INSERT INTO customers (name) VALUES (:n)", {"n": customer['name']})
         db.commit()
         logger.info("Successfully added customers into db")
-
-if __name__ == "__main__":
-    try:
-        create_customers()
-    except Exception as e:
-        raise e

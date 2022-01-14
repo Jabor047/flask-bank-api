@@ -1,11 +1,11 @@
 import datetime
 import os
+import string
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import DateTime
 from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -29,7 +29,7 @@ class Accounts(Base):
     __tablename__ = "accounts"
     acc_id = Column(Integer, primary_key=True, autoincrement=True)
     acc_name = Column(String(50), nullable=False)
-    acc_number = Column(Integer, unique=True)
+    acc_number = Column(String(30), unique=True)
     acc_type = Column(String(20), nullable=False)
     amount = Column(Integer)
     customer_id = Column(Integer, ForeignKey("customers.cust_id"), nullable=False)
@@ -59,14 +59,8 @@ class Transactions(Base):
         self.amount = amount
         self.transaction_type = transaction_type
 
-def create_tables(name):
+def create_tables(engine, name):
     try:
-        # for linux and windows systems uncomment below
-        docker_host_ip = "172.18.0.2"
-
-        # for mac os
-        # docker_host_ip = "host.docker.internal"
-        engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/{name}", echo=True)
         if not database_exists(engine.url):
             create_database(engine.url)
 
@@ -74,6 +68,3 @@ def create_tables(name):
         logger.info("All Models Created Successfully")
     except Exception as e:
         raise e
-
-if __name__ == "__main__":
-    create_tables()
