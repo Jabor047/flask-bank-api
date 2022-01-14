@@ -58,10 +58,10 @@ class Transactions(Base):
         self.amount = amount
         self.transaction_type = transaction_type
 
-if __name__ == "__main__":
+def create_tables():
     try:
         # for linux and windows systems uncomment below
-        docker_host_ip = "172.17.0.2"
+        docker_host_ip = "172.18.0.2"
 
         # for mac os
         # docker_host_ip = "host.docker.internal"
@@ -71,3 +71,6 @@ if __name__ == "__main__":
         logger.info("All Models Created Successfully")
     except Exception as e:
         raise e
+
+if __name__ == "__main__":
+    create_tables()
