@@ -39,7 +39,7 @@ class BankApiTestCase(BaseTestCase):
         self.assertEqual(response["status_code"], 400)
         self.assertIn("doesn't exist", response["message"])
 
-    def test_create_account_account_exists(self):
+    def test_create_account_zaccount_exists(self):
         params = {
             "customer_name": "Georgina%20Hazel",
             "account_name": "test",
