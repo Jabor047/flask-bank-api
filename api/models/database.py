@@ -58,14 +58,14 @@ class Transactions(Base):
         self.amount = amount
         self.transaction_type = transaction_type
 
-def create_tables():
+def create_tables(name):
     try:
         # for linux and windows systems uncomment below
         docker_host_ip = "172.18.0.2"
 
         # for mac os
         # docker_host_ip = "host.docker.internal"
-        engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/docker", echo=True)
+        engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/{name}", echo=True)
         Base.metadata.create_all(engine)
         logger.info("All Models Created Successfully")
     except Exception as e:

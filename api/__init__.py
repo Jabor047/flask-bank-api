@@ -1,6 +1,5 @@
 import os
 import sys
-import socket
 from flask import Flask
 from flasgger import Swagger
 
@@ -10,9 +9,8 @@ from api.app import bank
 from api.models.database import create_tables
 from api.insert_db import create_customers
 
-ip_address = socket.gethostbyname(socket.gethostname())
-create_tables()
-create_customers()
+create_tables("docker")
+create_customers("docker")
 
 def create_app(test_config=None):
     # create and configure app

@@ -9,18 +9,20 @@ from models.database import Base
 from logger import setup_logger
 
 logger = setup_logger("insert_data")
-# for linux and windows systems uncomment below
-docker_host_ip = "172.18.0.2"
 
-# for mac os
-# docker_host_ip = "host.docker.internal"
-engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/docker")
+def create_customers(db_name):
 
-Base.metadata.bind = engine
+    # for linux and windows systems uncomment below
+    docker_host_ip = "172.18.0.2"
 
-db = scoped_session(sessionmaker(bind=engine))
+    # for mac os
+    # docker_host_ip = "host.docker.internal"
+    engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/{db_name}")
 
-def create_customers():
+    Base.metadata.bind = engine
+
+    db = scoped_session(sessionmaker(bind=engine))
+
     logger.info("Reading customers from customers.json")
     customers = open("/app/api/customers.json")
     customers = json.load(customers)

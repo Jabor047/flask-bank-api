@@ -2,14 +2,19 @@ import unittest
 import requests
 import sys
 import os
+import socket
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import request
+from api.insert_db import create_customers
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from api.models.database import Base
+from api.models.database import Base, create_tables
 from api.logger import setup_logger
-from api import ip_address
+
+ip_address = socket.gethostbyname(socket.gethostname())
+create_tables('test')
+create_customers("test")
 
 class BaseTestCase(unittest.TestCase):
     logger = setup_logger("unittest")
@@ -19,7 +24,7 @@ class BaseTestCase(unittest.TestCase):
 
     # for mac os
     # docker_host_ip = "host.docker.internal"
-    engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/docker")
+    engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/test")
 
     Base.metadata.bind = engine
 

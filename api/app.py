@@ -130,10 +130,10 @@ def transfer():
                 transfer_account_error = jsonify(success=False, status_code=404,
                                                  message="Both accounts not Found try different ones")
                 return transfer_account_error
-
-        same_transfer_account_error = jsonify(success=False, status_code=403,
-                                              message="Can't transfer to the same account")
-        return same_transfer_account_error
+        else:
+            same_transfer_account_error = jsonify(success=False, status_code=403,
+                                                  message="Can't transfer to the same account")
+            return same_transfer_account_error
 
 @bank.route("/retrieve_balance", methods=["GET"])
 @swag_from("docs/retrieve_balance.yml")
