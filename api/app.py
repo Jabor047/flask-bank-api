@@ -152,10 +152,11 @@ def retrieve_transfer_history():
     if request.method == "GET":
 
         account_transfer_his = db.execute("SELECT * FROM transactions WHERE acc_num = :a",
-                                          {"a": account_number}).fetchone()
+                                          {"a": account_number}).fetchall()
 
-        if account_transfer_his is not None:
-            transfer_history_success = jsonify(success=True, status_code=200, history=account_transfer_his)
+        if len(account_transfer_his) > 1:
+            transfer_history_success = jsonify(success=True, status_code=200,
+                                               history=[r._asdict() for r in account_transfer_his])
 
             return transfer_history_success
         else:
