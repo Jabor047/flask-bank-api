@@ -4,7 +4,7 @@ import sys
 import os
 import socket
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import query, scoped_session, sessionmaker
 from flask import request
 from api.insert_db import create_customers
 
@@ -29,6 +29,14 @@ class BaseTestCase(unittest.TestCase):
     Base.metadata.bind = engine
 
     db = scoped_session(sessionmaker(bind=engine))
+
+    truncate_customers = db.execute("TRUNCATE TABLE customers")
+    db.add(truncate_customers)
+    db.commit()
+
+    truncate_accounts = db.execute("TRUNCATE TABLE accounts")
+    db.add(truncate_accounts)
+    db.commit()
 
     def test_index(self):
         self.logger.info("Tesing Index URL")
