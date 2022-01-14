@@ -1,28 +1,23 @@
 import os
 import sys
 from flask.json import jsonify
-from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import request, Blueprint
 from flasgger import swag_from
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from api.models.database import Accounts, Base, Transactions
+from api.models.database import Accounts, Transactions
 from api.logger import setup_logger
+from api.models.database import create_tables
+from api.insert_db import create_customers
+from api.db_init import db, engine
 
 logger = setup_logger("api")
-# for linux and windows systems uncomment below
-docker_host_ip = "172.18.0.2"
 
-# for mac os
-# docker_host_ip = "host.docker.internal"
-engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/docker")
-
-Base.metadata.bind = engine
-
-db = scoped_session(sessionmaker(bind=engine))
 bank = Blueprint("bank", __name__, url_prefix="/")
+
+create_tables(engine, "docker")
+create_customers("docker")
 
 @bank.route("/create_account", methods=['POST'])
 @swag_from("docs/create_account.yml")
@@ -69,21 +64,21 @@ def transfer():
 
     if request.method == "POST":
         if source_acc_num != target_acc_num:
-            source_acc = db.execute("SELECT * FROM accounts WHERE acc_number = :d",
-                                    {"d": source_acc_num}).fetchone()
+            source_acc_bal = db.execute("SELECT * FROM accounts WHERE acc_number = :d",
+                                        {"d": source_acc_num}).fetchone()
 
-            target_acc = db.execute("SELECT * FROM accounts WHERE acc_number = :d",
-                                    {"d": target_acc_num}).fetchone()
+            target_acc_bal = db.execute("SELECT * FROM accounts WHERE acc_number = :d",
+                                        {"d": target_acc_num}).fetchone()
 
-            if source_acc and target_acc:
-                if source_acc["amount"] > amount:
+            if source_acc_bal and target_acc_bal:
+                if source_acc_bal["amount"] > amount:
                     try:
-                        source_bal = source_acc["amount"] - amount
-                        target_bal = target_acc["amount"] + amount
+                        source_bal = source_acc_bal["amount"] - amount
+                        target_bal = target_acc_bal["amount"] + amount
 
                         source_update = db.execute("UPDATE accounts set amount = :a WHERE acc_number = :b",
                                                    {"a": source_bal, "b": source_acc_num})
-
+                        logger.info(f"updating source balance {source_acc_num}")
                         db.add(source_update)
                         db.commit()
 
@@ -91,12 +86,13 @@ def transfer():
                                                     trans_msg=f"Transfered {amount} to {str(target_acc_num)}",
                                                     amount=amount,
                                                     transaction_type="withdraw")
-
+                        logger.info(f"updating transactions for source account {source_acc_num}")
                         db.add(source_trans)
                         db.commit()
 
                         target_update = db.execute("UPDATE accounts set amount = :a WHERE acc_number = :b",
                                                    {"a": target_bal, "b": target_acc_num})
+                        logger.info(f"updating source balance {target_acc_num}")
                         db.add(target_update)
                         db.commit()
 
@@ -104,7 +100,7 @@ def transfer():
                                                     trans_msg=f"Transfered {amount} from {str(source_acc_num)}",
                                                     amount=amount,
                                                     transaction_type="deposit")
-
+                        logger.info(f"updating transactions for source account {target_acc_num}")
                         db.add(target_trans)
                         db.commit()
                     except Exception as e:
@@ -118,11 +114,11 @@ def transfer():
                     transfer_balance_error = jsonify(success=False, status_code=403,
                                                      message=f"{source_acc_num} has insufficient balance")
                     return transfer_balance_error
-            elif source_acc and target_acc is None:
+            elif source_acc_bal and target_acc_bal is None:
                 transfer_account_error = jsonify(success=False, status_code=404,
                                                  message=f"Target account {target_acc_num} not Found")
                 return transfer_account_error
-            elif source_acc is None and target_acc:
+            elif target_acc_bal and source_acc_bal is None:
                 transfer_account_error = jsonify(success=False, status_code=404,
                                                  message=f"Source account {source_acc_num} not Found.")
                 return transfer_account_error
@@ -150,7 +146,7 @@ def retrieve_balance():
             balance = db.execute("SELECT amount FROM Accounts WHERE acc_number = :d", {"d": account_number}).fetchone()
             if balance:
                 balance_account = jsonify(success=False, status_code=200,
-                                          message=f"Account balance is {balance}")
+                                          message=f"Account balance is {balance['amount']}")
                 return balance_account
 
 @bank.route("/transferhistory", methods=["GET"])
@@ -159,7 +155,8 @@ def retrieve_transfer_history():
     account_number = request.args.get("account_number")
     if request.method == "GET":
 
-        account_transfer_his = db.execute("SELECT * FROM transactions WHERE acc_num = :a", {"a": account_number})
+        account_transfer_his = db.execute("SELECT * FROM transactions WHERE acc_num = :a",
+                                          {"a": account_number}).fetchone()
 
         if account_transfer_his is not None:
             transfer_history_success = jsonify(success=True, status_code=200, history=account_transfer_his)

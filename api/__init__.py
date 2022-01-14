@@ -6,11 +6,6 @@ from flasgger import Swagger
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from api.config.swagger import template, swagger_config
 from api.app import bank
-from api.models.database import create_tables
-from api.insert_db import create_customers
-
-create_tables("docker")
-create_customers("docker")
 
 def create_app(test_config=None):
     # create and configure app
