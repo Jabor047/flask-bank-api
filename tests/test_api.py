@@ -20,7 +20,7 @@ class BankApiTestCase(BaseTestCase):
         response = requests.post(self.URL + '/create_account', params=params)
         response = response.content.decode("utf-8")
         response = json.loads(response)
-        pp(response)
+        # pp(response)
         self.assertEqual(response["status_code"], 200)
         self.assertIn("account Successfully added", response["message"])
 
@@ -67,7 +67,6 @@ class BankApiTestCase(BaseTestCase):
         post_response = requests.post(self.URL + '/create_account', params=account_params)
         post_response = post_response.content
         post_response = post_response.decode("utf-8")
-        pp(post_response)
 
         transfer_params = {
             "source_account_number": 9,
@@ -79,7 +78,6 @@ class BankApiTestCase(BaseTestCase):
         response = response.content
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(200, response["status_code"])
         self.assertIn("transfered from", response["message"])
 
@@ -109,7 +107,6 @@ class BankApiTestCase(BaseTestCase):
         response = response.content
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 404)
         self.assertIn("Target account", response["message"])
 
@@ -139,7 +136,6 @@ class BankApiTestCase(BaseTestCase):
         response = response.content
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 404)
         self.assertIn("Both accounts not Found", response["message"])
 
@@ -154,7 +150,6 @@ class BankApiTestCase(BaseTestCase):
         response = response.content
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 403)
         self.assertIn("Can't transfer to the same account", response["message"])
 
@@ -166,7 +161,6 @@ class BankApiTestCase(BaseTestCase):
         response = response.content
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 200)
         self.assertIn("Account balance is", response["message"])
 
@@ -178,7 +172,6 @@ class BankApiTestCase(BaseTestCase):
         response = response.content
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 404)
         self.assertIn("Account not Found", response["message"])
 
@@ -188,25 +181,21 @@ class BankApiTestCase(BaseTestCase):
         }
         response = requests.get(self.URL + "/transferhistory", params=retrieve_balance_params)
         response = response.content
-        # pp(response)
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 200)
 
     def test_transferhistory_fail(self):
         retrieve_balance_params = {
-            "account_number": 9
+            "account_number": 8
         }
         response = requests.get(self.URL + "/transferhistory", params=retrieve_balance_params)
         response = response.content
-        # pp(response)
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 404)
         self.assertIn("Account not Found", response["message"])
-        self.delete_test_accounts()
+
 
 if __name__ == "__main__":
     unittest.main()
