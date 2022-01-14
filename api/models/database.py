@@ -1,6 +1,5 @@
 import datetime
 import os
-import string
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -29,7 +28,7 @@ class Accounts(Base):
     __tablename__ = "accounts"
     acc_id = Column(Integer, primary_key=True, autoincrement=True)
     acc_name = Column(String(50), nullable=False)
-    acc_number = Column(String(30), unique=True)
+    acc_number = Column(Integer, unique=True)
     acc_type = Column(String(20), nullable=False)
     amount = Column(Integer)
     customer_id = Column(Integer, ForeignKey("customers.cust_id"), nullable=False)
