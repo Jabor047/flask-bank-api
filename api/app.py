@@ -154,7 +154,7 @@ def retrieve_transfer_history():
         account_transfer_his = db.execute("SELECT * FROM transactions WHERE acc_num = :a",
                                           {"a": account_number}).fetchall()
 
-        if len(account_transfer_his) > 1:
+        if len(account_transfer_his) >= 1:
             transfer_history_success = jsonify(success=True, status_code=200,
                                                history=[r._asdict() for r in account_transfer_his])
 
