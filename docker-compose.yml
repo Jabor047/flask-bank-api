@@ -14,8 +14,12 @@ services:
     build: ./
     links:
       - db
+    external_links:
+      - db:postgres_db
     depends_on:
       db:
         condition: service_healthy 
     ports:
       - 9090:5000
+    environment:
+      - DB_HOST=postgres_db
