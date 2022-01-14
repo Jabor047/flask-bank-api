@@ -1,3 +1,4 @@
+import imp
 import unittest
 import requests
 import sys
@@ -11,32 +12,24 @@ from api.insert_db import create_customers
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from api.models.database import Base, create_tables
 from api.logger import setup_logger
+from api.app import db
 
 ip_address = socket.gethostbyname(socket.gethostname())
-create_tables('test')
-create_customers("test")
 
 class BaseTestCase(unittest.TestCase):
     logger = setup_logger("unittest")
     URL = f"http://{ip_address}:5000"
 
-    docker_host_ip = "172.18.0.2"
-
-    # for mac os
-    # docker_host_ip = "host.docker.internal"
-    engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/test")
-
-    Base.metadata.bind = engine
-
-    db = scoped_session(sessionmaker(bind=engine))
-
-    truncate_customers = db.execute("TRUNCATE TABLE customers")
-    db.add(truncate_customers)
+    db.execute("DELETE FROM transactions")
     db.commit()
 
-    truncate_accounts = db.execute("TRUNCATE TABLE accounts")
-    db.add(truncate_accounts)
+    db.execute("DELETE FROM accounts")
     db.commit()
+
+    db.execute("DELETE FROM customers")
+    db.commit()
+
+    create_customers("docker")
 
     def test_index(self):
         self.logger.info("Tesing Index URL")
