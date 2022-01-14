@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from logger import setup_logger
@@ -66,6 +67,9 @@ def create_tables(name):
         # for mac os
         # docker_host_ip = "host.docker.internal"
         engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/{name}", echo=True)
+        if not database_exists(engine.url):
+            create_database(engine.url)
+
         Base.metadata.create_all(engine)
         logger.info("All Models Created Successfully")
     except Exception as e:
