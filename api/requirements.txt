@@ -3,3 +3,4 @@ SQLAlchemy==1.4.29
 psycopg2
 flasgger
 requests
+sqlalchemy_utils
