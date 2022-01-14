@@ -110,11 +110,11 @@ def transfer():
                     transfer_balance_error = jsonify(success=False, status_code=403,
                                                      message=f"{source_acc_num} has insufficient balance")
                     return transfer_balance_error
-            elif source_acc_bal and target_acc_bal is None:
+            elif source_acc_bal and not target_acc_bal:
                 transfer_account_error = jsonify(success=False, status_code=404,
                                                  message=f"Target account {target_acc_num} not Found")
                 return transfer_account_error
-            elif target_acc_bal and source_acc_bal is None:
+            elif target_acc_bal and not source_acc_bal:
                 transfer_account_error = jsonify(success=False, status_code=404,
                                                  message=f"Source account {source_acc_num} not Found.")
                 return transfer_account_error
