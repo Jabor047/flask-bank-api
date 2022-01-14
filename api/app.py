@@ -28,6 +28,7 @@ bank = Blueprint("bank", __name__, url_prefix="/")
 @swag_from("docs/create_account.yml")
 def create_account():
     customer_name = request.args.get('customer_name', None)
+    customer_name = customer_name.replace("%20", " ")
     account_name = request.args.get('account_name', None)
     account_number = request.args.get('account_number')
     amount = request.args.get('amount', None)
