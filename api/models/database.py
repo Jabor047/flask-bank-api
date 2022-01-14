@@ -18,7 +18,7 @@ class Customers(Base):
     __tablename__ = "customers"
     cust_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
-    acc_id = relationship("accounts")
+    acc = relationship("Accounts")
 
     def __init__(self, name) -> None:
         self.name = name
@@ -31,9 +31,9 @@ class Accounts(Base):
     acc_number = Column(Integer, unique=True)
     acc_type = Column(String(20), nullable=False)
     amount = Column(Integer)
-    customer_id = Column(Integer, ForeignKey("customers.cust_id"))
+    customer_id = Column(Integer, ForeignKey("customers.cust_id"), nullable=False)
     last_update = Column(DateTime(timezone=False), default=datetime.datetime.now())
-    trans_id = relationship("transactions")
+    trans_id = relationship("Transactions")
 
     def __init__(self, name, number, amount, customer_id, acc_type="Current") -> None:
         self.acc_name = name
@@ -66,7 +66,6 @@ def create_tables():
         # for mac os
         # docker_host_ip = "host.docker.internal"
         engine = create_engine(f"postgresql://docker:docker@{docker_host_ip}/docker", echo=True)
-        # engine = create_engine("postgresql://postgres:postgres@localhost/docker")
         Base.metadata.create_all(engine)
         logger.info("All Models Created Successfully")
     except Exception as e:
