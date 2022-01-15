@@ -1,7 +1,7 @@
-retrive transfer history of a given customer
+This is the endpoint for retriving the transfer history of a given account
 ---
 tags:
-  - APIROUTES
+  - Bank_Api
 parameters:
   - name: usage
     description: The url should contain account_number. Usage - base_url/transferhistory?account_number=344
@@ -19,5 +19,8 @@ responses:
   200:
     description: When the page loads successfully and json object is returned
 
+  403: 
+    description: insufficient balance or You are trying to transfer to the same account. 
+
   404:
-    description: Account not Found.try different one
+    description: One account or both not Found.try different one

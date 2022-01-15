@@ -1,10 +1,10 @@
-Creates accounts for Customers in the system
+This is the endpoint for creating accounts for customers in the system.NB the customer must already exists in order for account creation to be successfull
 ---
 tags:
-  - APIROUTES
+  - Bank_Api
 parameters:
   - name: usage
-    description:  The url should have the necessary info to create a new account. usage - base_url/create_account?customer_name=kev&account_name=example&account_number=2&amount=90&account_type=current
+    description:  The url should have the parameters to create a new account. usage - base_url/create_account?customer_name=kev&account_name=example&account_number=2&amount=90&account_type=current
     in: body
     required: true
     schema:

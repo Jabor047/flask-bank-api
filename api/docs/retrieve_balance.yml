@@ -1,10 +1,10 @@
-Retrieve Balance for Account
+This is the endpoint for the retrieving balance for accounts
 ---
 tags:
-  - APIROUTES
+  - Bank_Api
 parameters:
   - name: usage
-    description: The url should have the necessary info to retrive the balance i.e account_number. usage - base_url/retrieve_balance?account_number
+    description: The url should have the parameters to retrive the balance i.e account_number. usage - base_url/retrieve_balance?account_number
     in: body
     required: true
     schema:

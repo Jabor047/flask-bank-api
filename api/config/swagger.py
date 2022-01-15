@@ -2,7 +2,8 @@ template = {
     "swagger": "2.0",
     "info": {
         "title": "Bank API",
-        "description": "API for performing basic Bank Operations like retrieve balance",
+        "description": "This is a basic HTTP API for one for a bank, a backend API for bank employees."
+                       "It can be consumed by multiple frontends",
         "contact": {
             "responsibleOrganization": "LocalFounder",
             "responsibleDeveloper": "Kevin",
