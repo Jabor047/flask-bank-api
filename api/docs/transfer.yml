@@ -1,7 +1,7 @@
 This is the endpoint for money transfers between accounts, 
 ---
 tags:
-  - APIROUTES
+  - Bank_Api
 parameters:
   - name: usage
     description: The url should have the necessary info to retrive the balance. Usage - base_url/transfer?source_account_number=344&target_account_number=778&amount=90
