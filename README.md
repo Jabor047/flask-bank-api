@@ -1,3 +1,22 @@
+## Bank API
+This is an internal API for a fake financial institution using Python. it basic functionality is defined in the Tasks section below
+
+### Usage
+The whole application is dockerized you just run the docker container and you're good.
+1. clone repo
+2. run ``` docker-compose up --build ``` to build and start the containers.
+3. To create a new account use the following ``` localhost:9090/create_account?customer_name=***&account_name=***&account_number=***&amount=**&account_type=*** ```, replacing the *** with values of course 😀
+4. To retrieve balance use the following url format ``` localhost:9090/retrieve_balance?account_number=*** ```
+5. To transfer an amount between different accounts ``` localhost:9090/transfer?source_account_number=***&target_account_number=***&amount=** ```
+6. To get the transfer history for an account ``` localhost:9090/transferhistory?account_number=*** ```
+
+### Testing
+To run the unittests for the API, you run the following command ``` docker exec -it bank_api /usr/local/bin/python3 /app/tests/test_api.py ```
+
+### Documentation
+To view the documentation of the api go to the url ``` localhost:9090/ ```
+
+## Challenge description
 ### Objective
 
 Your assignment is to build an internal API for a fake financial institution using Python and any framework.
