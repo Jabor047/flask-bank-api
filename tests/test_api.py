@@ -3,7 +3,7 @@ import requests
 import sys
 import os
 import json
-from pprint import pprint as pp
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from base import BaseTestCase
 
@@ -90,7 +90,6 @@ class BankApiTestCase(BaseTestCase):
         response = response.content
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 403)
         self.assertIn("insufficient balance", response["message"])
 
@@ -119,7 +118,6 @@ class BankApiTestCase(BaseTestCase):
         response = response.content
         response = response.decode("utf-8")
         response = json.loads(response)
-        # pp(response)
         self.assertEqual(response["status_code"], 404)
         self.assertIn("Source account", response["message"])
 

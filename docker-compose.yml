@@ -12,6 +12,7 @@ services:
       - /var/lib/postgresql
   web:
     build: ./
+    container_name: bank_api
     links:
       - db
     external_links:
